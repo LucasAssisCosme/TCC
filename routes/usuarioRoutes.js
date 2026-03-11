@@ -4,31 +4,31 @@ const express = require("express")
 const roteador = express.Router()
 
 //Importando tudo que tem no arquivo de controller do usuario 
-const livrosControler = require("../controllers/livrosControler")
+const usuarioControler = require("../controllers/usuarioControler")
 
 
 //Crud
 
 //C = Criar novo usuario 
 //Rota para solicitar a página de cadastro
-roteador.get("/cadastrar", livrosControler.livroCadastro)
+roteador.get("/cadastrar", usuarioControler.usuarioCadastro)
 //Rota para enviar dados da página de cadastro
-roteador.post("/cadastrar", livrosControler.salvarLivro)
+roteador.post("/cadastrar", usuarioControler.salvarUsuario)
 
 
 //R = Obter informações de usuarios
 //Retorna as informações de todos os usuarios
-roteador.get("/", livrosControler.listarLivros)
+roteador.get("/", usuarioControler.listarUsuario)
 //Retorna as informações de um usuário apenas
-roteador.get("/:id", livrosControler.buscarLivro)
+roteador.get("/:id", usuarioControler.buscarUsuario)
 
 // U = Atualizar um usuario
 
-roteador.post("/:id", livrosControler.atualizarLivro)
+roteador.post("/:id", usuarioControler.atualizarUsuario)
 
 // D = Deletar um usuario
 
-roteador.get("/deletar/:id", livrosControler.deletarLivro)
+roteador.get("/deletar/:id", usuarioControler.deletarUsuario)
 
 
 
