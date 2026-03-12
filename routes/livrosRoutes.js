@@ -16,6 +16,7 @@ roteador.get("/cadastrar", livrosControler.livroCadastro)
 roteador.post("/cadastrar", livrosControler.salvarLivro)
 
 
+
 //R = Obter informações de usuarios
 //Retorna as informações de todos os usuarios
 roteador.get("/", livrosControler.listarLivros)
@@ -24,11 +25,11 @@ roteador.get("/:id", livrosControler.buscarLivro)
 
 // U = Atualizar um usuario
 
-roteador.post("/:id", livrosControler.atualizarLivro)
+roteador.patch("/:id", livrosControler.atualizarLivro)
 
 // D = Deletar um usuario
 
-roteador.get("/deletar/:id", livrosControler.deletarLivro)
+roteador.delete("/deletar/:id", livrosControler.deletarLivro)
 
 
 

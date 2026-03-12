@@ -32,6 +32,7 @@ app.get("/home", (req,res) => {
 app.get("/", (req,res) => {
     res.render("login", { titulo: "Login"})
 })
+
 // caso digite uma rota que não existe, leva para 404.ejs
 app.use((req, res) => {
     res.status(404)

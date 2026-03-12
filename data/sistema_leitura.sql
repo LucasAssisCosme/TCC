@@ -81,3 +81,5 @@ CREATE TABLE partes_favoritas (
   FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
   FOREIGN KEY (livro_id) REFERENCES livros(id)
 );
+
+ALTER TABLE livros ADD editora VARCHAR(100) NOT NULL;
