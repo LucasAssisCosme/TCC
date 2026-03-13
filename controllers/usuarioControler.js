@@ -56,6 +56,44 @@ module.exports = {
             })
       })
     },
+    listarUsuarios(req,res){
+        //Acessar o model e resgatar as informações
+      usuarioModels.listarTodos((erro, usuarios) => {
+               if(erro){
+              return res.status(500).render("usuarios/erroUsuario", {
+                titulo: "Erro",
+                mensagem: "Erro ao listar os usuarios"
+              })
+            }
+            //Se deu certo, renderizar a pagina de lista usuarios
+            res.render("usuarios/listaUsuarios", {
+              titulo: "Lista de usuarios",
+              usuarios
+            })
+      })
+    },
+    buscarUsuario(req,res){
+      //Buscar id como parametro url
+    const id = req.params.id
+
+    //Acessar model para realizar busca
+    usuarioModels.buscarPorid(id, (erro,usuario) => {
+        //Se deu erro na busca, informar
+        //ou se não achou usuario
+          if(erro || !usuario){
+            return res.status(500).render("usuarios/erroUsuario", {
+              titulo: "erro",
+              mensagem: "Erro ao buscar usuario"
+            })
+          }
+
+          //Se achou usuario, renderiza pagina de ediçõa
+          res.render("usuarios/editarUsuario", {
+            titulo: "Edição", 
+            usuario
+          })
+    })
+  },
     mudarSenhaUsuario(req,res){
 
     },

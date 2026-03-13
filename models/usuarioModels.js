@@ -39,6 +39,33 @@ module.exports = {
         })
         
    },
+    listarTodos: (callback) => {
+     //Variavel sql que guarda a consulta desejada
+      const sql = `SELECT * FROM usuarios`
+
+        //Executar o comando no banco
+        conn.query(sql, (erro, resultados) => {
+        if(erro){
+          return callback(erro, null)
+        }
+        callback(null, resultados)
+        })
+   },
+
+   //Atualizar = UPDATE
+   //Buscar usuario
+   buscarPorid: (id, callback) => {
+            const sql = `SELECT * FROM  usuarios WHERE id = ?`
+            const valor = [ id ]
+            conn.query(sql, valor, (erro, resultado) => {
+
+               if(erro){
+                    return callback(erro, null)
+               }
+               callback(null, resultado[0] || null)
+            })
+            
+   },
    atualizar: (id,{nome,email,senha,foto_perfil, bio, genero_favorito, tipo, apelido}, callback) => {
         //Variavel sql que guarda a consulta desejada
     

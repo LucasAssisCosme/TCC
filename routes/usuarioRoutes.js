@@ -15,6 +15,12 @@ roteador.post("/login", usuarioControler.loginUsuario)
 //Rota para solicitar a página de cadastro
 roteador.get("/cadastrar", usuarioControler.usuarioCadastro)
 //Rota para enviar dados da página de cadastro
+//Retorna as informações de todos os usuarios
+roteador.get("/", usuarioControler.listarUsuarios)
+//Retorna as informações de um usuário apenas
+
+roteador.get("/:id", usuarioControler.buscarUsuario)
+
 roteador.post("/cadastrar", usuarioControler.salvarUsuario)
 //Rota mudar senha
 roteador.post("/esqueceuSenha", usuarioControler.mudarSenhaUsuario)
