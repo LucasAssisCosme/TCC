@@ -1,143 +1,146 @@
-const usuarioModels = require("../models/usuarioModels")
+const usuarioModels = require("../models/usuarioModels");
 
 module.exports = {
+  formLogin(req, res) {
+    res.json({ titulo: "Login" });
+  },
 
-     formLogin(req,res){
-        res.render("login", { titulo: "Login" });
-     },
-
-     loginUsuario(req,res){
-     const { email, senha } = req.body;
+  loginUsuario(req, res) {
+    const { email, senha } = req.body;
     // Manda as informações do objeto para o model
-      usuarioModels.login(email, senha, (erro, logado) => {
+    usuarioModels.login(email, senha, (erro, logado) => {
       if (erro) {
-        return res.render("login", {
-          titulo: "Login errado",
-          erro: "erro no servidor",
-        });
+        return res.status(500).json({ erro: "erro no servidor" });
       }
       // Se não conseguiu logar, manda uma mensagem de erro
       if (!logado) {
-        res.render("login", {
-          titulo: "Login errado",
-          erro: "Email ou senha inválidos",
-        });
+        res.status(401).json({ erro: "Email ou senha inválidos" });
       }
       // Se conseguiu manda uma mensagem de confirmação
       else {
-        res.status(200);
-        res.render("index", { titulo: "Bem vindo", usuario: logado.nome });
+        res.json({ message: "Bem vindo", usuario: logado.nome });
       }
     });
-     },
+  },
 
-    usuarioCadastro(req,res){
-         //Reenderiza a pagina de cadastro
-         res.render("usuarios/cadastroUsuario", {titulo: "Cadastro"})
-    },
-    salvarUsuario(req,res){
-          const {nome,email,senha,foto_perfil, bio, genero_favorito, tipo, apelido } = req.body
-     
-      //Manda as informações para o model
-      usuarioModels.salvar({nome,email,senha,foto_perfil, bio, genero_favorito, tipo, apelido }, (erro, novoUsuario) => {
-            //se deu erro, renderiza a mensagem de erro mostrando a mensagem
-            if(erro){
-              return res.status(500).render("usuarios/erroUsuario", {
-                titulo: "Erro",
-                mensagem: "Erro ao salvar o usuario"
-              })
-            }
+  usuarioCadastro(req, res) {
+    //Reenderiza a pagina de cadastro
+    res.json({ titulo: "Cadastro" });
+  },
+  salvarUsuario(req, res) {
+    const {
+      nome,
+      email,
+      senha,
+      foto_perfil,
+      bio,
+      genero_favorito,
+      tipo,
+      apelido,
+    } = req.body;
 
-            //Se deu certo renderiza a pagina de confirmação 
-            res.render("usuarios/confirmacaoUsuario", {
-              titulo: "Cadastro confirmado",
-              tipo: "cadastro",
-              novoUsuario
-            })
-      })
-    },
-    listarUsuarios(req,res){
-        //Acessar o model e resgatar as informações
-      usuarioModels.listarTodos((erro, usuarios) => {
-               if(erro){
-              return res.status(500).render("usuarios/erroUsuario", {
-                titulo: "Erro",
-                mensagem: "Erro ao listar os usuarios"
-              })
-            }
-            //Se deu certo, renderizar a pagina de lista usuarios
-            res.render("usuarios/listaUsuarios", {
-              titulo: "Lista de usuarios",
-              usuarios
-            })
-      })
-    },
-    buscarUsuario(req,res){
-      //Buscar id como parametro url
-    const id = req.params.id
+    //Manda as informações para o model
+    usuarioModels.salvar(
+      { nome, email, senha, foto_perfil, bio, genero_favorito, tipo, apelido },
+      (erro, novoUsuario) => {
+        //se deu erro, renderiza a mensagem de erro mostrando a mensagem
+        if (erro) {
+          return res.status(500).json({ mensagem: "Erro ao salvar o usuario" });
+        }
+
+        //Se deu certo renderiza a pagina de confirmação
+        res.json({
+          titulo: "Cadastro confirmado",
+          tipo: "cadastro",
+          novoUsuario,
+        });
+      },
+    );
+  },
+
+  
+  listarUsuarios(req, res) {
+    //Acessar o model e resgatar as informações
+    usuarioModels.listarTodos((erro, usuarios) => {
+      if (erro) {
+        return res.status(500).json({ mensagem: "Erro ao listar os usuarios" });
+      }
+      //Se deu certo, renderizar a pagina de lista usuarios
+      res.json({
+        titulo: "Lista de usuarios",
+        usuarios,
+      });
+    });
+  },
+  buscarUsuario(req, res) {
+    //Buscar id como parametro url
+    const id = req.params.id;
 
     //Acessar model para realizar busca
-    usuarioModels.buscarPorid(id, (erro,usuario) => {
-        //Se deu erro na busca, informar
-        //ou se não achou usuario
-          if(erro || !usuario){
-            return res.status(500).render("usuarios/erroUsuario", {
-              titulo: "erro",
-              mensagem: "Erro ao buscar usuario"
-            })
-          }
+    usuarioModels.buscarPorid(id, (erro, usuario) => {
+      //Se deu erro na busca, informar
+      //ou se não achou usuario
+      if (erro || !usuario) {
+        return res.status(500).json({ mensagem: "Erro ao buscar usuario" });
+      }
 
-          //Se achou usuario, renderiza pagina de ediçõa
-          res.render("usuarios/editarUsuario", {
-            titulo: "Edição", 
-            usuario
-          })
-    })
-  },
-    mudarSenhaUsuario(req,res){
-
-    },
-    atualizarUsuario(req,res){
-       const id = req.params.id;
-  const { nome,email,senha,foto_perfil, bio, genero_favorito, tipo, apelido} = req.body;
-
-  usuarioModels.atualizar(id, { nome,email,senha,foto_perfil, bio, genero_favorito, tipo, apelido }, (erro, atualizado) => {
-
-    if (erro || !atualizado) {
-      return res.status(500).render("usuarios/erroUsuario", {
-        titulo: "erro",
-        mensagem: "Erro ao atualizar usuario"
+      // Se achou usuario, renderiza pagina de ediçõa
+      res.json({
+        titulo: "Edição",
+        usuario,
       });
-    }
 
-    res.render("usuarios/confirmacaoUsuario", {
-      tipo: "edicao",
-      titulo: "Edição confirmada",
-      atualizado
+      // res.json(req.body)
     });
+  },
+  mudarSenhaUsuario(req, res) {},
+  atualizarUsuario(req, res) {
+    const id = req.params.id;
+    const {
+      nome,
+      email,
+      senha,
+      foto_perfil,
+      bio,
+      genero_favorito,
+      tipo,
+      apelido,
+    } = req.body;
 
-  });
-    },
-    deletarUsuario(req,res){
-        const id = req.params.id
+    usuarioModels.atualizar(
+      id,
+      { nome, email, senha, foto_perfil, bio, genero_favorito, tipo, apelido },
+      (erro, atualizado) => {
+        if (erro || !atualizado) {
+          return res
+            .status(500)
+            .json({ mensagem: "Erro ao atualizar usuario" });
+        }
 
-     //Acessar model e solicitar a exclusão do usuario
-     usuarioModels.deletar(id,(erro, sucesso) => {
+        res.json({
+          tipo: "edicao",
+          titulo: "Edição confirmada",
+          atualizado,
+        });
+      },
+    );
+  },
+  deletarUsuario(req, res) {
+    const id = req.params.id;
 
-            if(erro || !sucesso){
-            return res.status(500).render("usuarios/erroUsuario", {
-              titulo: "erro",
-              mensagem: "Erro ao deletar usuario"
-            })
-          }
+    //Acessar model e solicitar a exclusão do usuario
+    usuarioModels.deletar(id, (erro, sucesso) => {
+      if (erro || !sucesso) {
+        return res.status(500).json({ mensagem: "Erro ao deletar usuario" });
+      }
 
-          const deletado = { usuario: "Selecionado"}
-          //Renderiza a tela de sucesso
-          res.render("usuarios/confirmacaoUsuario", {
-            tipo: "excluir",
-            titulo: "usuario deletado",
-            deletado
-          })
-     })
-    }
-}
+      const deletado = { usuario: "Selecionado" };
+      //Renderiza a tela de sucesso
+      res.json({
+        tipo: "excluir",
+        titulo: "usuario deletado",
+        deletado,
+      });
+    });
+  },
+};

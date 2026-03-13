@@ -2,7 +2,7 @@ const livrosModels = require("../models/livrosModels")
 
 module.exports = {
     livroCadastro(req, res) {
-        res.render("livros/cadastroLivro", { titulo: "Cadastro" })
+        res.json({ titulo: "Cadastro" })
     },
 
     salvarLivro(req, res) {
@@ -11,11 +11,11 @@ module.exports = {
         livrosModels.guardar({ titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora }, (erro, novoLivro) => {
             if (erro) {
                 console.error('falha ao inserir livro:', erro.sqlMessage);
-                return res.status(500).render('livros/erroLivro');
+                return res.status(500).json({ mensagem: "Erro ao salvar livro" });
             }
 
 
-            res.render("livros/confirmarLivros", {
+            res.json({
                 titulo: "Cadastro confirmado",
                 tipo: "cadastro",
                 novoLivro
@@ -25,15 +25,12 @@ module.exports = {
     listarLivros(req, res) {
         livrosModels.listarGeral((erro, livros) => {
             if (erro) {
-                return res.status(500).render("livros/erroLivro", {
-                    titulo: "Erro",
-                    mensagem: "Erro ao ver lista livros"
-                })
+                return res.status(500).json({ mensagem: "Erro ao ver lista livros" })
             }
             
             
 
-            res.render("livros/mostrarLivros", {
+            res.json({
                 titulo: "lista produtos",
                 livros
             })
@@ -48,17 +45,14 @@ module.exports = {
             //Se deu erro na busca, informar
             //ou se não achou usuario
             if (erro || !livro) {
-                return res.status(500).render("livros/erroLivro", {
-                    titulo: "erro",
-                    mensagem: "Erro ao buscar livro"
-                })
+                return res.status(500).json({ mensagem: "Erro ao buscar livro" })
             }
 
             
             
 
             // Se achou usuario, renderiza pagina de ediçõa
-            res.render("livros/editarLivro", {
+            res.json({
                 titulo: "Edição",
                 livro
             })
@@ -71,14 +65,11 @@ module.exports = {
         livrosModels.Renovar(id, { titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora }, (erro, atualizado) => {
 
             if (erro || !atualizado) {
-                return res.status(500).render("livros/erroLivro", {
-                    titulo: "erro",
-                    mensagem: "Erro ao atualizar livro"
-                });
+                return res.status(500).json({ mensagem: "Erro ao atualizar livro" });
             }
 
              
-            res.render("livros/confirmarLivros", {
+            res.json({
                 tipo: "edicao",
                 titulo: "Edição confirmada",
                 atualizado
@@ -94,17 +85,14 @@ module.exports = {
         livrosModels.deletar(id, (erro, sucesso) => {
 
             if (erro || !sucesso) {
-                return res.status(500).render("livros/erroLivro", {
-                    titulo: "erro",
-                    mensagem: "Erro ao deletar livro"
-                })
+                return res.status(500).json({ mensagem: "Erro ao deletar livro" })
             }
 
       
 
             const deletado = { livro: "Selecionado" }
             // Renderiza a tela de sucesso
-            res.render("livros/confirmarLivros", {
+            res.json({
                 tipo: "excluir",
                 titulo: "livro deletado",
                 deletado
