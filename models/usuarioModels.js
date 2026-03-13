@@ -76,43 +76,60 @@ module.exports = {
       callback(null, resultado[0] || null);
     });
   },
-  atualizar: (
-    id,
-    { nome, email, senha, foto_perfil, bio, genero_favorito, tipo, apelido },
-    callback,
-  ) => {
-    //Variavel sql que guarda a consulta desejada
 
-    //criar um objeto para retronar para o usuario
+esqueceuSenha: (email, senha, id, callback) => {
 
-    const sql = `UPDATE usuarios
-      SET nome = ?, email = ?, senha = ?, foto_perfil = ?, bio = ?, genero_favorito = ?, tipo = ?, apelido = ?
-      WHERE id = ?
-      `;
-    //Variavel com informação oculta/misteriosa
-    const valores = [
-      nome,
-      email,
-      senha,
-      foto_perfil,
-      bio,
-      genero_favorito,
-      tipo,
-      apelido,
+  const sql = `UPDATE usuarios SET senha = ? WHERE id = ? AND email = ?`
+  const valores = [senha, id, email]
+
+  conn.query(sql, valores, (erro, resultado) => {
+
+    if (erro) {
+      return callback(erro, null)
+    }
+
+    if (resultado.affectedRows === 0) {
+      return callback(new Error("Email ou usuário não encontrado"), null)
+    }
+
+    const usuarioAtualizado = {
       id,
-    ];
+      email,
+      senha
+    }
 
-    const atualizado = {
-      usuario: valores[0],
-    };
-    //Executar o comando no banco
-    conn.query(sql, valores, (erro, resultado) => {
-      if (erro) {
-        return callback(erro, null);
-      }
-      callback(null, atualizado);
-    });
-  },
+    callback(null, usuarioAtualizado)
+  })
+}, 
+ atualizar: (id, dados, callback) => {
+  // Filtrar apenas campos com valores válidos (não undefined e não vazios)
+  const camposValidos = {};
+  Object.keys(dados).forEach(key => {
+    if (dados[key] !== undefined && dados[key] !== '') {
+      camposValidos[key] = dados[key];
+    }
+  });
+
+  // Se nenhum campo for válido, retorne erro
+  if (Object.keys(camposValidos).length === 0) {
+    return callback(new Error('Nenhum campo válido para atualizar'), null);
+  }
+
+  // Construir a parte SET da query dinamicamente
+  const setClause = Object.keys(camposValidos).map(key => `${key} = ?`).join(', ');
+  const valores = Object.values(camposValidos);
+  valores.push(id);  // Adicionar id no final para WHERE
+
+  const sql = `UPDATE usuarios SET ${setClause} WHERE id = ?`;
+
+  conn.query(sql, valores, (erro, resultado) => {
+    if (erro) {
+      return callback(erro, null);
+    }
+    // Retornar o objeto atualizado (opcional: busque do banco ou retorne os campos atualizados)
+    callback(null, { id, ...camposValidos });
+  });
+},
   deletar: (id, callback) => {
     //Variavel sql que guarda a consulta desejada
     const sql = `DELETE FROM usuarios WHERE id = ?`;

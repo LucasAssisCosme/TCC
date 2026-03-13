@@ -12,12 +12,14 @@ const port = 3000
 
 const usuarioRoutes = require("./routes/usuarioRoutes")
 const livrosRoutes = require("./routes/livrosRoutes")
+const resenhaRoutes = require("./routes/resenhaRoutes")
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 
 app.use("/livros", livrosRoutes)
 app.use("/usuario", usuarioRoutes)
+app.use("/resenha", resenhaRoutes)
 
 // app.set('view engine', 'ejs')
 

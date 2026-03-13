@@ -93,7 +93,43 @@ module.exports = {
       // res.json(req.body)
     });
   },
-  mudarSenhaUsuario(req, res) {},
+mudarSenhaUsuario(req, res) {
+
+  const id = req.params.id
+
+  const {
+    email,
+    novaSenha,
+    confirmarSenha
+  } = req.body
+
+  // verifica se as senhas são iguais
+  if (novaSenha !== confirmarSenha) {
+    return res.status(400).json({
+      mensagem: "As senhas não coincidem"
+    })
+  }
+
+  usuarioModels.esqueceuSenha(
+    email,
+    novaSenha,
+    id,
+    (erro, resultado) => {
+
+      if (erro) {
+        return res.status(500).json({
+          mensagem: erro.message
+        })
+      }
+
+      res.json({
+        titulo: "Nova senha confirmada",
+        usuario: resultado
+      })
+    }
+  )
+},
+
   atualizarUsuario(req, res) {
     const id = req.params.id;
     const {
@@ -110,8 +146,8 @@ module.exports = {
     usuarioModels.atualizar(
       id,
       { nome, email, senha, foto_perfil, bio, genero_favorito, tipo, apelido },
-      (erro, atualizado) => {
-        if (erro || !atualizado) {
+      (erro) => {
+        if (erro) {
           return res
             .status(500)
             .json({ mensagem: "Erro ao atualizar usuario" });
@@ -120,7 +156,6 @@ module.exports = {
         res.json({
           tipo: "edicao",
           titulo: "Edição confirmada",
-          atualizado,
         });
       },
     );

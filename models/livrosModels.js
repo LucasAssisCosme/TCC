@@ -46,30 +46,32 @@ module.exports = {
   })
 },
 
+Renovar: (id, dados, callback) => {  // Ou renomeie para atualizar
+  // Filtrar apenas campos com valores válidos
+  const camposValidos = {};
+  Object.keys(dados).forEach(key => {
+    if (dados[key] !== undefined && dados[key] !== '') {
+      camposValidos[key] = dados[key];
+    }
+  });
 
-      Renovar: (id,{titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora}, callback) => {
+  if (Object.keys(camposValidos).length === 0) {
+    return callback(new Error('Nenhum campo válido para atualizar'), null);
+  }
 
+  const setClause = Object.keys(camposValidos).map(key => `${key} = ?`).join(', ');
+  const valores = Object.values(camposValidos);
+  valores.push(id);
 
-       
-         
-        const sql = `UPDATE livros
-      SET titulo = ?, autor = ?, genero = ?, ano = ?, numero_paginas = ?, descricao = ?, imagem_capa = ?, editora = ?
-      WHERE id = ?`
-            const valores = [ titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora,id ]
+  const sql = `UPDATE livros SET ${setClause} WHERE id = ?`;
 
-             const atualizado = {
-             titulo: valores[0]
-        }
-
-            conn.query(sql, valores, (erro, resultado) => {
-
-               if(erro){
-                    return callback(erro, null)
-               }
-               callback(null, atualizado)
-            })
-        
-      },
+  conn.query(sql, valores, (erro, resultado) => {
+    if (erro) {
+      return callback(erro, null);
+    }
+    callback(null, { id, ...camposValidos });
+  });
+},
       deletar: (id, callback) => {
             //Variavel sql que guarda a consulta desejada
                  const sql = `DELETE FROM livros WHERE id = ?`

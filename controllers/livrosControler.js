@@ -62,9 +62,9 @@ module.exports = {
         const id = req.params.id;
         const { titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora } = req.body;
 
-        livrosModels.Renovar(id, { titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora }, (erro, atualizado) => {
+        livrosModels.Renovar(id, { titulo, autor, genero, ano, numero_paginas, descricao, imagem_capa, editora }, (erro,) => {
 
-            if (erro || !atualizado) {
+            if (erro) {
                 return res.status(500).json({ mensagem: "Erro ao atualizar livro" });
             }
 
@@ -72,7 +72,6 @@ module.exports = {
             res.json({
                 tipo: "edicao",
                 titulo: "Edição confirmada",
-                atualizado
             });
 
         });
